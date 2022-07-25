@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>大鱼吃小鱼</title>
+
+	</head>
+	<body>
+		<script src="js/pixi.min.js"></script>
+		<script src="js/first.js"></script>
+		<script src="js/second.js"></script>
+		<script src="js/third.js"></script>
+		<script src="js/fuurth.js"></script>
+		<script type="text/javascript">
+			//敌方鱼存放数组
+			function enemy_fish(x, y) { //函数定义
+				this.x = x;
+				this.y = y;
+			}
+			var enemy_fishList = []; //敌方数组定义
+			/* 变量声明 */
+			var wudi = 0; //无敌控制
+			var quanqia = 0; //关卡选择
+			var issport = 0; //控制
+			var iq = 9;
+			var s = 0,
+				s1 = 1,
+				wu = 0; //敌鱼生成频率控制变量初始值
+			var fanwei = 50; //碰撞检测范围数值
+			var ai = 9; //敌鱼生成种类控制变量
+			var score = 0; //分数初始化，及得分定义
+			var ph = 4; //血量初始化，血量为4
+			var plan = [];
+			//飞		变量声明部分
+			var kz_1 = 30;
+			var Dyu1List = [];
+			var DyuList = [];
+			var w = 0;
+			var Dyu1 = 0;
+			var Dengji = 0;
+			//张 变量声明部分
+			var enemyfish_02_array_left = [];
+			var enemyfish_02_array_right = [];
+			var enemyfish_06_array_left = [];
+			var enemyfish_06_array_right = [];
+			var enemyfish_09_array_left = [];
+			var enemyfish_09_array_right = [];
+			var time = 0;
+			var time_1 = 0;
+			var time_2 = 0;
+			var time_3 = 0;
+			var time_4 = 0;
+			var time_5 = 0;
+			var variate = 0;
+			// 权 变量声明部分
+			var Q = 0,
+				M = 0,
+				N = 0;
+			var DfishList = [],
+				Dfish3List = [],
+				Dfish5List = [];
+			var wangfei = 0,
+				ganyu = 0,
+				mulan = 0,
+				kz = 80,
+				kz1 = 200,
+				kz3 = 350;
+			var Dfish1List = [],
+				Dfish4List = [],
+				Dfish6 = [];
+			//游戏画布创建
+			let dycxy = new PIXI.Application(800, 600);
+			document.body.appendChild(dycxy.view);
+
+			/* 
+			 *
+			 * 			开始游戏部分实现
+			 * 
+			 */
+
+			var bg1 = new PIXI.Sprite.fromImage("img/bj.png"); //开始游戏页面背景
+			var bg1_wenli = new PIXI.Texture.fromImage("img/bj.png"); //开始游戏对应纹理
+			var bg_first = new PIXI.Texture.fromImage("img/backgrand_1.png"); //第一关背景
+			var bg_second = new PIXI.Texture.fromImage("img/bgimg.jpg"); //第二关背景
+			var bg_third = new PIXI.Texture.fromImage("img/z_bj.png"); //第三关背景
+			var bg_fourth = new PIXI.Texture.fromImage("img/beijin.jpg"); //第四关背景
+			dycxy.stage.addChild(bg1);
+
+			//第一关图片
+			var one = new PIXI.Sprite.fromImage("img/one.png");
+			one.anchor.set(0.5, 0.5);
+			one.scale.x = 0.5;
+			one.scale.y = 0.5;
+			one.x = 100;
+			one.y = 500;
+			dycxy.stage.addChild(one);
+			one.visible = false;
+
+			//第二关图片
+			var two = new PIXI.Sprite.fromImage("img/two.png");
+			two.anchor.set(0.5, 0.5);
+			two.scale.x = 0.5;
+			two.scale.y = 0.5;
+			two.x = 300;
+			two.y = 425;
+			dycxy.stage.addChild(two);
+			two.visible = false;
+
+			//第三关图片
+			var three = new PIXI.Sprite.fromImage("img/three.png");
+			three.anchor.set(0.5, 0.5);
+			three.scale.x = 0.5;
+			three.scale.y = 0.5;
+			three.x = 500;
+			three.y = 500;
+			dycxy.stage.addChild(three);
+			three.visible = false;
+
+			//第四关图片
+			var four = new PIXI.Sprite.fromImage("img/four.png");
+			four.anchor.set(0.5, 0.5);
+			four.scale.x = 0.5;
+			four.scale.y = 0.5;
+			four.x = 700;
+			four.y = 425;
+			dycxy.stage.addChild(four);
+			four.visible = false;
+
+			//背景文字覆盖图片
+			var b = new PIXI.Sprite.fromImage("img/bj0.png");
+			b.anchor.set(0.5, 0.5);
+			b.x = 390;
+			b.y = 135;
+			dycxy.stage.addChild(b);
+			b.visible = false;
+
+			//开始图片和函数
+			var ks = new PIXI.Sprite.fromImage("img/ks.png");
+			ks.anchor.set(0.5, 0.5);
+			ks.scale.x = 0.6;
+			ks.scale.y = 0.6;
+			ks.x = 400;
+			ks.y = 300;
+			dycxy.stage.addChild(ks);
+			
+			//名字
+			var mz = new PIXI.Sprite.fromImage("img/mz2.png");
+			mz.anchor.set(0.5, 0.5);
+			mz.x = 260;
+			mz.y = 50;
+			dycxy.stage.addChild(mz);
+			/* 
+			 *
+			 * 游戏主体实现
+			 * 
+			 * */
+			//鱼加入
+			let meyu = new PIXI.Sprite.fromImage("img/09头左.png");
+			meyu.anchor.set(0.5, 0.5);
+			meyu.scale.x = 0.3;
+			meyu.scale.y = 0.3;
+			//meyu.alpha=0.5;			//鱼透明度
+			meyu.y = 70;
+			meyu.x = 30;
+			dycxy.stage.addChild(meyu);
+			meyu.visible = false;
+			//第一关卡鱼
+			let meyu1 = new PIXI.Texture.fromImage("img/09头右.png");
+			let meyu2 = new PIXI.Texture.fromImage("img/09头左.png");
+			//第三关卡鱼
+			var meyu_left = new PIXI.Texture.fromImage("img/01头左.png");
+			var meyu_right = new PIXI.Texture.fromImage("img/01头右.png");
+			var meyu_left1 = new PIXI.Texture.fromImage("img/09头左.png");
+			var meyu_right1 = new PIXI.Texture.fromImage("img/09头右.png");
+			var meyu_left2 = new PIXI.Texture.fromImage("img/08头左.png");
+			var meyu_right2 = new PIXI.Texture.fromImage("img/08头右.png");
+			//第四关卡鱼
+			var meyu_4 = new PIXI.Texture.fromImage("img/earth.png");
+			/* 
+			 *
+			 *  	顶部功能添加
+			 * 
+			 */
+			let bg_1 = new PIXI.Sprite.fromImage("img/lanbei.png");
+			dycxy.stage.addChild(bg_1);
+			bg_1.visible = false;
+			var jindu = new PIXI.Sprite.fromImage("img/空白进度条.png");
+			jindu.anchor.set(0.5, 0.5);
+			jindu.x = 170;
+			jindu.y = 30;
+			dycxy.stage.addChild(jindu);
+			jindu.visible = false;
+			var fenshu = new PIXI.Text("得分:");
+			fenshu.x = 650
+			fenshu.y = 20;
+			fenshu.style.fill = "white";
+			dycxy.stage.addChild(fenshu);
+			fenshu.visible = false;
+			var fenshu1 = new PIXI.Text(score);
+			fenshu1.x = 720;
+			fenshu1.y = 20;
+			fenshu1.style.fill = "white";
+			dycxy.stage.addChild(fenshu1);
+			fenshu1.visible = false;
+			var guanqia = new PIXI.Text('1');
+			guanqia.x = 400;
+			guanqia.y = 20;
+			guanqia.style.fill = "green";
+			dycxy.stage.addChild(guanqia);
+			guanqia.visible = false;
+			//生命值添加
+			var ming = new PIXI.Text("生命值:");
+			ming.x = 440;
+			ming.y = 20;
+			dycxy.stage.addChild(ming);
+			ming.visible = false;
+			var blood = new PIXI.Sprite.fromImage("img/4.png");
+			blood.scale.x = 0.1;
+			blood.scale.y = 0.1;
+			blood.x = 540;
+			blood.y = 26;
+			dycxy.stage.addChild(blood);
+			blood.visible = false;
+
+
+			//开始按钮
+			ks.interactive = true;
+			ks.on("click", tubiao);
+
+			function tubiao() {
+				b.visible = true;
+				four.visible = true;
+				one.visible = true;
+				two.visible = true;
+				three.visible = true;
+				ks.visible = false;
+				mz.visible = false;
+			}
+			//第一关按钮
+			one.interactive = true;
+			one.on("click", oneshijian);
+
+			function oneshijian() {
+				jichu_yin();
+				meyu.visible = true;
+				bg1.texture = bg_first;
+				issport = 1;
+				quanqia = 1
+				ztl_xian();
+				s1 = 1;
+			}
+			//第二关按钮
+			two.interactive = true;
+			two.on("click", twoshijian);
+
+			function twoshijian() {
+				jichu_yin();
+				guanqia.text = 2;
+				quanqia = 2;
+				issport = 1;
+				meyu.scale.x = 0.41;
+				meyu.scale.y = 0.41;
+				meyu.visible = true;
+				bg1.texture = bg_second;
+				ai = 9;
+				ztl_xian();
+				s1 = 1;
+			}
+
+			//第三关按钮
+			three.interactive = true;
+			three.on("click", threeshijian);
+
+			function threeshijian() {
+				jichu_yin();
+				guanqia.text = 3;
+				quanqia = 3;
+				issport = 1;
+				meyu.scale.x = 0.51;
+				meyu.scale.y = 0.51;
+				meyu.visible = true;
+				bg1.texture = bg_third;
+				ztl_xian();
+				s1 = 1;
+			}
+
+			//第四关按钮
+			four.interactive = true;
+			four.on("click", fourshijian);
+
+			function fourshijian() {
+				jichu_yin();
+				bg1.texture = bg_fourth;
+				quanqia = 4;
+				issport = 1;
+				guanqia.text = 4;
+				meyu.scale.x = 0.3;
+				meyu.scale.y = 0.3;
+				meyu.visible = true;
+				ztl_xian();
+				s1 = 1;
+			}
+
+			//鱼鼠标跟随
+			bg1.interactive = true;
+			bg1.on("mousemove", function(event) {
+				if (issport == 1) {
+					var pos = event.data.getLocalPosition(dycxy.stage);
+					if (quanqia == 1) {
+						if (meyu.x < pos.x) {
+							meyu.texture = meyu1;
+						} else {
+							meyu.texture = meyu2;
+						}
+					} else if (quanqia == 2) {
+						//第二关自己鱼控制部分
+						if (meyu.scale.x > 1.0) {
+							var wf_lyu = new PIXI.Texture.fromImage("img/wf_yuL2.png");
+							var wf_ryu = new PIXI.Texture.fromImage("img/wf_yuR2.png");
+						} else if (meyu.scale.x > 0.7) {
+							var wf_lyu = new PIXI.Texture.fromImage("img/wf_yuL1.png");
+							var wf_ryu = new PIXI.Texture.fromImage("img/wf_yuR1.png");
+						} else {
+							var wf_lyu = new PIXI.Texture.fromImage("img/wf_yuL.png");
+							var wf_ryu = new PIXI.Texture.fromImage("img/wf_yuR.png");
+						}
+						if (meyu.x < pos.x) {
+							meyu.texture = wf_ryu;
+						} else {
+							meyu.texture = wf_lyu;
+						}
+					} else if (quanqia == 3) {
+						//第三关自己鱼控制部分
+						if (meyu.scale.x > 1.5) {
+							if (meyu.x < pos.x) {
+								meyu.texture = meyu_right2;
+							} else {
+								meyu.texture = meyu_left2;
+							}
+						} else if (meyu.scale.x > 1) {
+							if (meyu.x < pos.x) {
+								meyu.texture = meyu_right1;
+							} else {
+								meyu.texture = meyu_left1;
+							}
+						} else {
+							if (meyu.x < pos.x) {
+								meyu.texture = meyu_right;
+							} else {
+								meyu.texture = meyu_left;
+							}
+						}
+					} else if (quanqia == 4) {
+						meyu.texture = meyu_4;
+					}
+
+					meyu.x = pos.x;
+					meyu.y = pos.y;
+				}
+			});
+			//帧频控制函数
+			dycxy.ticker.add(zhu);
+
+			function zhu() {
+				if (issport == 1) {
+					switch (quanqia) {
+						case 1:
+							first_pass();
+							break;
+						case 2:
+							second_pass();
+							break;
+						case 3:
+							third_pass();
+							break;
+						case 4:
+							animate();
+							break;
+						default:
+							break;
+					}
+				}
+			}
+
+			//关卡选择
+			function jichu_xian() {
+				b.visible = true;
+				four.visible = true;
+				one.visible = true;
+				two.visible = true;
+				three.visible = true;
+				//b.visible=true;
+				mz.visible = true;
+				bg1.texture = bg1_wenli;
+			}
+
+			function jichu_yin() {
+				four.visible = false;
+				one.visible = false;
+				two.visible = false;
+				three.visible = false;
+				b.visible = false;
+				mz.visible = false;
+			}
+			//状态栏控制
+			function ztl_xian() {
+				bg_1.visible = true;
+				jindu.visible = true;
+				fenshu.visible = true;
+				fenshu1.visible = true;
+				guanqia.visible = true;
+				ming.visible = true;
+				blood.visible = true;
+			}
+
+			function ztl_yin() {
+				bg_1.visible = false;
+				jindu.visible = false;
+				fenshu.visible = false;
+				fenshu1.visible = false;
+				guanqia.visible = false;
+				ming.visible = false;
+				blood.visible = false;
+			}
+			//当前关卡胜利
+			function shengli() {
+				issport = 0;
+				expty();
+				ztl_yin();
+				var sheng = new PIXI.Sprite.fromImage("img/chenggong.png") /* Text("恭喜你通过本关！！！") */ ;
+				sheng.anchor.set(0.5, 0.5);
+				sheng.scale.x = 0.8;
+				sheng.scale.y = 0.8;
+				sheng.x = 400;
+				sheng.y = 300;
+				dycxy.stage.addChild(sheng);
+				meyu.visible = false;
+				var qp = setTimeout(function() {
+					dycxy.stage.removeChild(sheng);
+					jichu_xian();
+				}, 2000);
+			}
+			//游戏失败
+			function shibai() {
+				issport = 0;
+				expty();
+				ztl_yin();
+				var sheng = new PIXI.Sprite.fromImage("img/shibai.png");
+				sheng.anchor.set(0.5, 0.5);
+				sheng.x = 430;
+				sheng.y = 270;
+				dycxy.stage.addChild(sheng);
+			}
+
+			//血条变化
+			function xuetiao_bianhua(x) {
+				var xuetiao_4 = new PIXI.Texture.fromImage("img/4.png");
+				var xuetiao_3 = new PIXI.Texture.fromImage("img/3.png");
+				var xuetiao_2 = new PIXI.Texture.fromImage("img/2.png");
+				var xuetiao_1 = new PIXI.Texture.fromImage("img/1.png");
+				switch (x) {
+					case 4:
+						blood.texture = xuetiao_4;
+						break;
+					case 3:
+						blood.texture = xuetiao_3;
+						break;
+					case 2:
+						blood.texture = xuetiao_2;
+						break;
+					case 1:
+						blood.texture = xuetiao_1;
+						break;
+					default:
+						break;
+				}
+			}
+		</script>
+	</body>
+</html>
